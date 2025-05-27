@@ -35,6 +35,7 @@ https://www.kernel.org/doc/html/v4.14/driver-api/pinctl.html
 
 https://www.youtube.com/watch?v=p-lJ1QFgpig&ab_channel=TheLinuxFoundation
 https://www.youtube.com/watch?v=VdiZjLd0DPM&ab_channel=BayLibre
+https://www.youtube.com/watch?v=VdiZjLd0DPM&ab_channel=BayLibre
 
 gpio sybsystem
 pinctl sybsystem
@@ -43,3 +44,20 @@ pinmux - exclusive function
 pin Config 
 
 Pin ctontrol and gpio interaction - separatly controlled except `.stict` in `*_ops`
+
+pad - GPIO/FuncA/FuncB...
+
+PINCTRL Framework
+PINS - pad/finger/ball...
+pin groups - 
+
+PINS -> PINGROUPS -> FUNCTIONS (i2c0, uart1, etc.)
+
+pinctrl_ops
+pinmux_ops
+
+designed before DT
+
+GPIO framework - gpiolib -> gpio_desc(?)
+
+https://www.youtube.com/watch?v=lQRCDl0tFiQ&ab_channel=TheLinuxFoundation
