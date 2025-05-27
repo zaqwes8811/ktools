@@ -1,6 +1,6 @@
 ROOTFS:=/rootfss/rootfs
 
-run:
+run: pack_rootfs
 	cd linux-6.1.68 && \
 	qemu-system-arm -M vexpress-a9 -m 256M -kernel arch/arm/boot/zImage \
 			-dtb arch/arm/boot/dts/vexpress-v2p-ca9.dtb \
@@ -18,5 +18,5 @@ drv_dtb:
 	cp linux-6.1.68/drivers/soc/rockchip/sfi/atom_sfi_virtual_gpio_core.ko $(ROOTFS)/
 
 
-pack_rootfs:
-	cd $(ROOTFS) && find . | cpio -H newc -ov --owner root:root > $(HOME)/initramfs.cpio && gzip $(HOME)/initramfs.cpio
+pack_rootfs: drv_dtb
+	cd $(ROOTFS) && find . | cpio -H newc -ov --owner root:root > $(HOME)/initramfs.cpio && gzip -f $(HOME)/initramfs.cpio
