@@ -26,3 +26,5 @@ qemu-system-arm -M vexpress-a9 -m 256M -kernel arch/arm/boot/zImage \
 
 
 Ctrl-A x
+
+linux-6.1.68/arch/arm/boot/dts/vexpress-v2p-ca9.dts
