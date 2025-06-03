@@ -29,3 +29,14 @@ ENV PATH="$PATH:/opt/crosstool-ng-root/bin/bin"
 
 RUN cd crosstool-ng && ct-ng arm-unknown-linux-gnueabi
 RUN cd crosstool-ng && ct-ng build
+
+ENV PATH="$PATH:$HOME/x-tools/arm-unknown-linux-gnueabi/bin"
+
+COPY helloworld.c $HOME
+
+RUN cd ~ && arm-unknown-linux-gnueabi-gcc helloworld.c -o helloworld
+
+USER root
+
+# Kernel
+RUN apt update && apt install -y libmpc-dev libgmp3-dev

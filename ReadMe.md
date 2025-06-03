@@ -61,3 +61,7 @@ designed before DT
 GPIO framework - gpiolib -> gpio_desc(?)
 
 https://www.youtube.com/watch?v=lQRCDl0tFiQ&ab_channel=TheLinuxFoundation
+
+# Docker
+
+docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --user $(id -u) qemu_wrapper:latest bash

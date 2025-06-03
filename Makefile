@@ -25,3 +25,6 @@ pack_rootfs: drv_dtb
 
 docker_build:
 	docker build -t qemu_wrapper:latest .
+
+docker_run:
+	docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --user $(id -u) qemu_wrapper:latest bash
