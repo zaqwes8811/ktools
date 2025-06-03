@@ -79,3 +79,6 @@ https://nuttx.apache.org/docs/latest/platforms/arm64/qemu/boards/qemu-armv8a/ind
 [!!!] https://android.googlesource.com/platform/external/syzkaller/+/HEAD/docs/linux/setup_linux-host_qemu-vm_arm64-kernel.md
 
 https://wiki.debian.org/Arm64Qemu
+
+rpi4
+https://stackoverflow.com/questions/67045438/emulating-raspberry-pi-4-with-qemu
