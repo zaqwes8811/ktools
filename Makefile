@@ -20,3 +20,8 @@ drv_dtb:
 
 pack_rootfs: drv_dtb
 	cd $(ROOTFS) && find . | cpio -H newc -ov --owner root:root > $(HOME)/initramfs.cpio && gzip -f $(HOME)/initramfs.cpio
+
+
+
+docker_build:
+	docker build -t qemu_wrapper:latest .
