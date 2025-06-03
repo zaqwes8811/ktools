@@ -65,3 +65,17 @@ https://www.youtube.com/watch?v=lQRCDl0tFiQ&ab_channel=TheLinuxFoundation
 # Docker
 
 docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --user $(id -u) qemu_wrapper:latest bash
+
+# Aarch64/Arm64
+https://forum.armbian.com/topic/38258-running-self-build-image-on-qemu-arm64/
+
+https://gist.github.com/luk6xff/9f8d2520530a823944355e59343eadc1 !!
+
+https://www.altlinux.org/Ports/aarch64/QEMU
+https://cdn.kernel.org/pub/linux/kernel/people/will/docs/qemu/qemu-arm64-howto.html
+
+https://nuttx.apache.org/docs/latest/platforms/arm64/qemu/boards/qemu-armv8a/index.html
+
+[!!!] https://android.googlesource.com/platform/external/syzkaller/+/HEAD/docs/linux/setup_linux-host_qemu-vm_arm64-kernel.md
+
+https://wiki.debian.org/Arm64Qemu
