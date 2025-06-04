@@ -82,3 +82,14 @@ https://wiki.debian.org/Arm64Qemu
 
 rpi4
 https://stackoverflow.com/questions/67045438/emulating-raspberry-pi-4-with-qemu
+
+virt
+https://translatedcode.wordpress.com/2017/07/24/installing-debian-on-qemus-64-bit-arm-virt-board/
+
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/822312999/Building+and+Running+QEMU+from+Source+Code !!!
+
+/home/builder/workdir/sys/rootfs
+
+export CROSS_COMPILE=arm-unknown-linux-gnueabi-
+
+CONFIG_TC=n

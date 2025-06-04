@@ -29,7 +29,7 @@ RUN mkdir ~/src && cd ~/src/ && wget https://zlib.net/fossils/zlib-1.2.12.tar.gz
 ENV PATH="$PATH:/opt/crosstool-ng-root/bin/bin"
 
 RUN cd crosstool-ng && ct-ng arm-unknown-linux-gnueabi
-RUN cd crosstool-ng && export CT_PARALLEL_JOBS=2 && ct-ng build
+RUN cd crosstool-ng && export CT_PARALLEL_JOBS=4 && ct-ng build
 
 ENV PATH="$PATH:$HOME/x-tools/arm-unknown-linux-gnueabi/bin"
 
@@ -48,3 +48,5 @@ RUN pip3 install tomli
 
 RUN cd tools/qemu-9.2.4 && ./configure --target-list=arm-softmmu \
     && make
+
+ENV PATH="$PATH:/opt/tools/qemu-9.2.4/build/qemu-bundle/usr/local/bin"
