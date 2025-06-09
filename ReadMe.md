@@ -93,3 +93,18 @@ https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/822312999/Building+and+Run
 export CROSS_COMPILE=arm-unknown-linux-gnueabi-
 
 CONFIG_TC=n
+
+
+https://www.kernel.org/pub/linux/kernel/people/will/docs/qemu/qemu-arm64-howto.md !!
+
+aarch64 virt with dtb
+virt сам dtb генерит? https://gist.github.com/paranlee/3bf0f690baede7f9bf371249558348c8 !!!
+
+```
+qemu-system-aarch64 \
+    -machine virt,gic_version=3 \
+    -machine virtualization=true \
+    -cpu cortex-a72 -machine type=virt \
+    -smp 4 -m 4096 -display none \
+    -machine dumpdtb=virt-gicv3.dtb
+```

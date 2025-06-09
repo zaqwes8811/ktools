@@ -46,7 +46,7 @@ RUN mkdir tools && cd tools && wget https://download.qemu.org/qemu-9.2.4.tar.xz 
 
 RUN pip3 install tomli
 
-RUN cd tools/qemu-9.2.4 && ./configure --target-list=arm-softmmu \
+RUN cd tools/qemu-9.2.4 && ./configure --target-list="arm-softmmu,aarch64-softmmu" --enable-virtfs \
     && make
 
 ENV PATH="$PATH:/opt/tools/qemu-9.2.4/build/qemu-bundle/usr/local/bin"
