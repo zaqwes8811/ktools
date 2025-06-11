@@ -108,3 +108,48 @@ qemu-system-aarch64 \
     -smp 4 -m 4096 -display none \
     -machine dumpdtb=virt-gicv3.dtb
 ```
+
+load vmlinuz
+
+
+$ export ARCH=arm64
+$ export CROSS_COMPILE=aarch64-unknown-linux-gnu-
+$ make vexpress_defconfig
+
+make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- menuconfig
+
+make ARCH=arm64 CROSS_COMPILE=aarch64-unknown-linux-gnu- Image
+
+https://github.com/raspberrypi/documentation/blob/c666656d8782a509d7eae82ffe634cbd28b147b8/linux/kernel/building.md
+
+
+qemu-system-aarch64 -kernel arch/arm64/boot/Image \
+    -machine virt,gic_version=3 \
+    -machine virtualization=true \
+    -cpu cortex-a72 -machine type=virt \
+    -append "console=ttyAMA0" -nographic 
+
+
+sudo apt-get install vncviewer    
+
+sudo apt-get install xtightvncviewer
+
+https://unix.stackexchange.com/questions/479085/can-qemu-m-virt-on-arm-aarch64-have-multiple-serial-ttys-like-such-as-pl011-t
+
+# CI-CD
+Kernel from system image
+Cons:
+- tests should be added to build
+- special defconfig options
+- dts?
+
+Pro:
+- same kernel
+
+Kernel from stock kernel version
+Cons:
+- kernel
+
+Pro:
+- any kernel options
+- any test frameworks

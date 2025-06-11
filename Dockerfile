@@ -31,6 +31,9 @@ ENV PATH="$PATH:/opt/crosstool-ng-root/bin/bin"
 RUN cd crosstool-ng && ct-ng arm-unknown-linux-gnueabi
 RUN cd crosstool-ng && export CT_PARALLEL_JOBS=4 && ct-ng build
 
+RUN cd crosstool-ng && ct-ng aarch64-unknown-linux-gnu
+RUN cd crosstool-ng && export CT_PARALLEL_JOBS=4 && ct-ng build
+
 ENV PATH="$PATH:$HOME/x-tools/arm-unknown-linux-gnueabi/bin"
 
 COPY helloworld.c $HOME
@@ -50,3 +53,5 @@ RUN cd tools/qemu-9.2.4 && ./configure --target-list="arm-softmmu,aarch64-softmm
     && make
 
 ENV PATH="$PATH:/opt/tools/qemu-9.2.4/build/qemu-bundle/usr/local/bin"
+
+ENV PATH="$PATH:$HOME/x-tools/aarch64-unknown-linux-gnu/bin"
