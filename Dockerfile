@@ -55,3 +55,11 @@ RUN cd tools/qemu-9.2.4 && ./configure --target-list="arm-softmmu,aarch64-softmm
 ENV PATH="$PATH:/opt/tools/qemu-9.2.4/build/qemu-bundle/usr/local/bin"
 
 ENV PATH="$PATH:$HOME/x-tools/aarch64-unknown-linux-gnu/bin"
+
+ENV ARCH=arm64
+ENV CROSS_COMPILE=aarch64-unknown-linux-gnu-
+
+# No way to do this
+#RUN export SYSROOT=$(aarch64-unknown-linux-gnu-gcc -print-sysroot)
+
+RUN apt-get update && apt-get -y install cpio

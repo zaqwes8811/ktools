@@ -127,7 +127,20 @@ qemu-system-aarch64 -kernel arch/arm64/boot/Image \
     -machine virt,gic_version=3 \
     -machine virtualization=true \
     -cpu cortex-a72 -machine type=virt \
-    -append "console=ttyAMA0" -nographic 
+    -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
+    -initrd ../initramfs.cpio.gz
+
+aarch64-unknown-linux-gnu-readelf -a bin/busybox | grep "program interpreter"
+
+[Requesting program interpreter: /lib/ld-linux-aarch64.so.1]
+
+aarch64-unknown-linux-gnu-readelf -a bin/busybox | grep "Shared library"
+ 0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
+ 0x0000000000000001 (NEEDED)             Shared library: [libresolv.so.2]
+ 0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+
+
+ to lib64
 
 
 sudo apt-get install vncviewer    
