@@ -129,7 +129,7 @@ qemu-system-aarch64 -kernel arch/arm64/boot/Image \
     -machine virtualization=true \
     -cpu cortex-a72 -machine type=virt \
     -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
-    -initrd ../initramfs.cpio.gz
+    -initrd initramfs.cpio.gz
 
 aarch64-unknown-linux-gnu-readelf -a bin/busybox | grep "program interpreter"
 

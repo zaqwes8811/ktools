@@ -78,6 +78,7 @@ RUN cd $ROOTFS_ROOT && mkdir -p bin dev etc home lib lib64 proc sbin sys tmp usr
     && mkdir -p usr/bin usr/lib usr/sbin var/log \
     && export SYSROOT=$(aarch64-unknown-linux-gnu-gcc -print-sysroot) \
     && cp $SYSROOT/lib/ld-linux-aarch64.so.1 lib64 \
+    && cp $SYSROOT/lib/ld-linux-aarch64.so.1 lib \
     && cp $SYSROOT/lib/libm.so.6 lib64 \
     && cp $SYSROOT/lib/libresolv.so.2 lib64 \
     && cp $SYSROOT/lib/libc.so.6 lib64
@@ -86,5 +87,11 @@ RUN cd $ROOTFS_ROOT && mkdir -p bin dev etc home lib lib64 proc sbin sys tmp usr
 RUN apt-get update && apt -y install device-tree-compiler \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
+
+# Scripts
+
+COPY scripts scripts
+ENV PATH="$PATH:/opt/scripts"
+
 
 WORKDIR $HOME
