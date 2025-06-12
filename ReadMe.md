@@ -1,3 +1,17 @@
+# Usige
+
+Build
+
+`docker build -f DockerfileAarch64 -t qemu_wrapper_aarch64:latest .`
+
+Docker run
+
+`docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --volume $PWD:/home/builder/workdir:rw --user $(id -u) qemu_wrapper_aarch64:latest bash`
+
+
+Process
+
+
 # Base on
 https://medium.com/@fprotopapa/embedded-linux-from-scratch-quick-easy-on-qemu-87e761834b51
 
