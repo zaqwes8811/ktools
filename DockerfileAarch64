@@ -19,6 +19,7 @@ WORKDIR /opt/
 
 ENV QEMU_VERSION=9.2.4
 ENV NG_TAG=tags/crosstool-ng-1.27.0
+ENV NG_BIN=/opt/crosstool-ng-root/
 
 RUN chmod -R 777 /opt/
 
@@ -28,16 +29,16 @@ ENV HOME=/home/builder
 
 USER builder
 
-RUN git clone https://github.com/crosstool-ng/crosstool-ng.git \
-	&& cd crosstool-ng && git checkout $NG_TAG -b ct-ng \
-	&& find . -type f -exec dos2unix {} \; \
-	&& ./bootstrap && ./configure --prefix=/opt/crosstool-ng-root/bin \
-    && cd crosstool-ng && make install
-
 RUN mkdir ~/src && cd ~/src/ && wget https://zlib.net/fossils/zlib-1.2.12.tar.gz
 
-RUN cd crosstool-ng && ct-ng aarch64-unknown-linux-gnu
-RUN cd crosstool-ng && CT_PARALLEL_JOBS=2 ct-ng build
+RUN git clone https://github.com/crosstool-ng/crosstool-ng.git \
+    && cd crosstool-ng && git checkout $NG_TAG -b ct-ng \
+    && find . -type f -exec dos2unix {} \; \
+    && ./bootstrap && ./configure --prefix=$NG_BIN \
+    && make install \
+    && $NG_BIN/bin/ct-ng aarch64-unknown-linux-gnu \
+    && CT_PARALLEL_JOBS=2 $NG_BIN/bin/ct-ng build \
+    && cd .. && rm -rf crosstool-ng
 
 USER root
 
@@ -50,11 +51,20 @@ RUN mkdir tools && cd tools \
 RUN cd tools/qemu-$QEMU_VERSION && ./configure --target-list="aarch64-softmmu" --enable-virtfs \
     && make
 
-ENV PATH="$PATH:/opt/crosstool-ng-root/bin/bin"
+ENV PATH="$PATH:$NG_BIN/bin"
 ENV PATH="$PATH:/opt/tools/qemu-$QEMU_VERSION/build/qemu-bundle/usr/local/bin"
 ENV PATH="$PATH:$HOME/x-tools/aarch64-unknown-linux-gnu/bin"
 
 ENV ARCH=arm64
 ENV CROSS_COMPILE=aarch64-unknown-linux-gnu-
+
+ENV KERNEL_MAJOR=6
+ENV KERNEL_VERSION=$KERNEL_MAJOR.1.68
+
+RUN wget https://cdn.kernel.org/pub/linux/kernel/v$KERNEL_MAJOR.x/linux-$KERNEL_VERSION.tar.xz
+
+COPY fragment_tc_off.config .
+
+# Rootfs
 
 WORKDIR $HOME

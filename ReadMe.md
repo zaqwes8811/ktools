@@ -93,6 +93,7 @@ https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/822312999/Building+and+Run
 export CROSS_COMPILE=arm-unknown-linux-gnueabi-
 
 CONFIG_TC=n
+CONFIG_PREFIX
 
 
 https://www.kernel.org/pub/linux/kernel/people/will/docs/qemu/qemu-arm64-howto.md !!
@@ -166,3 +167,17 @@ Cons:
 Pro:
 - any kernel options
 - any test frameworks
+
+# Merge
+
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+make defconfig
+./scripts/kconfig/merge_config.sh .config .config-fragment
+
+
+../linux-6.1.68/scripts/config --disable CONFIG_TC
+
+https://stackoverflow.com/questions/7505164/how-do-you-non-interactively-turn-on-features-in-a-linux-kernel-config-file
+
+./scripts/config --set-val CONFIG_OPTION y
