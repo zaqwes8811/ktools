@@ -22,9 +22,8 @@ pack_rootfs: drv_dtb
 	cd $(ROOTFS) && find . | cpio -H newc -ov --owner root:root > $(HOME)/initramfs.cpio && gzip -f $(HOME)/initramfs.cpio
 
 
-
 docker_build:
-	docker build -t qemu_wrapper:latest .
+	docker build -f DockerfileAarch64 -t qemu_wrapper_aarch64:latest .
 
 docker_run:
-	docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --volume $PWD:/home/builder/workdir:rw --user $(id -u) qemu_wrapper:latest bash
+	docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --volume $PWD:/home/builder/workdir:rw --user $(id -u) qemu_wrapper_aarch64:latest bash
