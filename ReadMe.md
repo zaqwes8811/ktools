@@ -18,10 +18,8 @@ Pack rootfs
 Run emu
 
 ```
-qemu-system-aarch64 -kernel arch/arm64/boot/Image \
-    -machine virt,gic_version=3 \
-    -machine virtualization=true \
-    -cpu cortex-a72 -machine type=virt \
+qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 4 -m 256 \
+    -kernel arch/arm64/boot/Image \
     -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
     -initrd initramfs.cpio.gz
 ```

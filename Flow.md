@@ -103,12 +103,8 @@ aarch64 virt with dtb
 virt сам dtb генерит? https://gist.github.com/paranlee/3bf0f690baede7f9bf371249558348c8 !!!
 
 ```
-qemu-system-aarch64 \
-    -machine virt,gic_version=3 \
-    -machine virtualization=true \
-    -cpu cortex-a72 -machine type=virt \
-    -smp 4 -m 4096 -display none \
-    -machine dumpdtb=virt-gicv3.dtb
+qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 4 -m 256 \
+    -display none -machine dumpdtb=virt-gicv3.dtb
 ```
 
 load vmlinuz
