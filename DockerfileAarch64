@@ -1,5 +1,17 @@
 FROM ubuntu:22.04
 
+ENV QEMU_VERSION=9.2.4
+ENV NG_TAG=tags/crosstool-ng-1.27.0
+ENV NG_BIN=/opt/crosstool-ng-root/
+ENV ARCH=arm64
+ENV CROSS_COMPILE=aarch64-unknown-linux-gnu-
+
+# Used stock kernel
+ENV KERNEL_MAJOR=6
+ENV KERNEL_VERSION=$KERNEL_MAJOR.1.68
+ENV ROOTFS_ROOT=/opt/busybox/_install/
+ENV BUSYBOX_TAG=tags/1_36_0
+
 RUN apt-get update && apt-get install -y gcc g++ gperf bison flex texinfo help2man make libncurses5-dev \
     python3-dev autoconf automake libtool libtool-bin gawk wget bzip2 xz-utils unzip \
     patch libstdc++6 rsync git meson ninja-build dos2unix \
@@ -7,19 +19,15 @@ RUN apt-get update && apt-get install -y gcc g++ gperf bison flex texinfo help2m
     bc \
     python3-venv python3-pip \
     pkg-config libglib2.0-dev libpixman-1-dev \
-    cpio && \
+    cpio \
+    device-tree-compiler && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
 RUN pip3 install tomli
 
 # From source code
-
 WORKDIR /opt/
-
-ENV QEMU_VERSION=9.2.4
-ENV NG_TAG=tags/crosstool-ng-1.27.0
-ENV NG_BIN=/opt/crosstool-ng-root/
 
 RUN chmod -R 777 /opt/
 
@@ -55,18 +63,10 @@ ENV PATH="$PATH:$NG_BIN/bin"
 ENV PATH="$PATH:/opt/tools/qemu-$QEMU_VERSION/build/qemu-bundle/usr/local/bin"
 ENV PATH="$PATH:$HOME/x-tools/aarch64-unknown-linux-gnu/bin"
 
-ENV ARCH=arm64
-ENV CROSS_COMPILE=aarch64-unknown-linux-gnu-
-
-ENV KERNEL_MAJOR=6
-ENV KERNEL_VERSION=$KERNEL_MAJOR.1.68
-
 RUN wget https://cdn.kernel.org/pub/linux/kernel/v$KERNEL_MAJOR.x/linux-$KERNEL_VERSION.tar.xz
 
 # Rootfs
-ENV ROOTFS_ROOT=/opt/busybox/_install/
-
-RUN git clone git://busybox.net/busybox.git && cd busybox && git checkout tags/1_36_0 -b bb \
+RUN git clone git://busybox.net/busybox.git && cd busybox && git checkout $BUSYBOX_TAG -b bb \
     && make defconfig \
     && tar -xvf /opt/linux-$KERNEL_VERSION.tar.xz -C /tmp/ \
     && /tmp/linux-$KERNEL_VERSION/scripts/config --disable CONFIG_TC \
@@ -84,14 +84,10 @@ RUN cd $ROOTFS_ROOT && mkdir -p bin dev etc home lib lib64 proc sbin sys tmp usr
     && cp $SYSROOT/lib/libc.so.6 lib64
 
 # DTB
-RUN apt-get update && apt -y install device-tree-compiler \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
+# TODO() Dump dtb from virt qemu deser and store
 
 # Scripts
-
 COPY scripts scripts
 ENV PATH="$PATH:/opt/scripts"
-
 
 WORKDIR $HOME
