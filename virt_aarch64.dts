@@ -1,0 +1,7 @@
+/include/ "virt-gicv3.dtsi"
+
+/ {
+	i2c0x {
+		status = "enabled";
+	};
+};
