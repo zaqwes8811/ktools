@@ -178,3 +178,15 @@ make defconfig
 https://stackoverflow.com/questions/7505164/how-do-you-non-interactively-turn-on-features-in-a-linux-kernel-config-file
 
 ./scripts/config --set-val CONFIG_OPTION y
+
+
+# Mount
+https://superuser.com/questions/165116/mount-dev-proc-sys-in-a-chroot-environment
+
+mount -a  # diesnt' work
+
+~ # cat /proc/mounts
+rootfs / rootfs rw,size=89836k,nr_inodes=22459 0 0
+proc /proc proc rw,relatime 0 0
+sysfs /sys sysfs rw,relatime 0 0
+rootfs /dev rootfs rw,size=89836k,nr_inodes=22459 0 0

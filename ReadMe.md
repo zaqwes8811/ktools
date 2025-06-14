@@ -36,7 +36,7 @@ cd ~/workdir/linux-$KERNEL_VERSION && pack_rootfs.sh
 
 - Dts from base virt dts
 
-`cd ~/workdir/ && dtc -i /opt/ -I dts -O dtb -o virt_aarch64.dtb virt_aarch64.dts`
+`cd ~/workdir/linux-$KERNEL_VERSION && dtc -i /opt/ -I dts -O dtb -o virt_aarch64.dtb ../virt_aarch64.dts`
 
 
 - Run emu
@@ -48,7 +48,7 @@ cd ~/workdir/linux-$KERNEL_VERSION
 from linux src root
 
 qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 4 -m 256 \
-    -dtb ../virt_aarch64.dtb \
+    -dtb virt_aarch64.dtb \
     -kernel arch/arm64/boot/Image \
     -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
     -initrd initramfs.cpio.gz
@@ -56,9 +56,19 @@ qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=vi
 Or better
 
 $QEMU_AARCH64_CALL_PREFIX \
-    -dtb ../virt_aarch64.dtb \
+    -dtb virt_aarch64.dtb \
     -kernel arch/arm64/boot/Image \
     -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
     -initrd initramfs.cpio.gz
+```
+
+- mount some fs
+
+```
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+
+TODO() devfs?
+
 ```
 
