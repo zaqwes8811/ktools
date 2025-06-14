@@ -190,3 +190,7 @@ rootfs / rootfs rw,size=89836k,nr_inodes=22459 0 0
 proc /proc proc rw,relatime 0 0
 sysfs /sys sysfs rw,relatime 0 0
 rootfs /dev rootfs rw,size=89836k,nr_inodes=22459 0 0
+
+# Mout host dir
+
+https://superuser.com/questions/628169/how-to-share-a-directory-with-the-host-without-networking-in-qemu
