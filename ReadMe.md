@@ -50,7 +50,6 @@ dtc -i /opt/ -I dts -O dtb -o virt_aarch64.dtb ../virt_aarch64.dts
 - Run emu
 
 ```
-
 cd $KERNEL_SRC
 
 $QEMU_AARCH64_CALL_PREFIX \
