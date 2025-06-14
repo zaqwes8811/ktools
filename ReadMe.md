@@ -1,25 +1,27 @@
 # Usige
 
-Build
+- Build
 
 `docker build -f DockerfileAarch64 -t qemu_wrapper_aarch64:latest .`
 
-Docker run
+- Docker run
 
 `docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --volume $PWD:/home/builder/workdir:rw --user $(id -u) qemu_wrapper_aarch64:latest bash`
 
-
-Build kernel
-
-
-Pack rootfs
-
-Dts
-
-`dtc -i /opt/ -I dts -O dtb -o virt_aarch64.dtb virt_aarch64.dts`
+- Note: next actions inside of docker and image has env vars presets, base dtsi, bare rootfs and stock kernel archive. All from `~/workdir`
 
 
-Run emu
+- Unpack and build kernel, dts will be external with patches for developed drivers - virt emu specific thing
+
+
+- Pack rootfs
+
+- Dts from base virt dts
+
+`cd ~/workdir/ && dtc -i /opt/ -I dts -O dtb -o virt_aarch64.dtb virt_aarch64.dts`
+
+
+- Run emu
 
 ```
 
@@ -31,5 +33,12 @@ qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=vi
     -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
     -initrd initramfs.cpio.gz
 
+Or better
+
+$QEMU_AARCH64_CALL_PREFIX \
+    -dtb ../virt_aarch64.dtb \
+    -kernel arch/arm64/boot/Image \
+    -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
+    -initrd initramfs.cpio.gz
 ```
 
