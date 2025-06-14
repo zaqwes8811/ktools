@@ -13,6 +13,17 @@
 
 - Unpack and build kernel, dts will be external with patches for developed drivers - virt emu specific thing
 
+```
+tar -xvf /opt/linux-$KERNEL_VERSION.tar.xz -C ~/workdir
+
+cd ~/workdir/linux-$KERNEL_VERSION
+
+make defconfig
+
+TODO() Merge with *.config
+
+make Image
+```
 
 - Pack rootfs
 
