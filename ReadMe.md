@@ -23,9 +23,16 @@ make defconfig
 TODO() Merge with *.config
 
 make Image
+make modules
 ```
 
-- Pack rootfs
+- Pack rootfs. It stored at docker build in $ROOTFS_ROOT
+
+```
+# It create initramfs from folder specified in $ROOTFS_ROOT
+cd ~/workdir/linux-$KERNEL_VERSION && pack_rootfs.sh
+
+```
 
 - Dts from base virt dts
 
@@ -36,10 +43,12 @@ make Image
 
 ```
 
+cd ~/workdir/linux-$KERNEL_VERSION
+
 from linux src root
 
 qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 4 -m 256 \
-    -dtb ../../virt_aarch64.dtb \
+    -dtb ../virt_aarch64.dtb \
     -kernel arch/arm64/boot/Image \
     -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
     -initrd initramfs.cpio.gz
