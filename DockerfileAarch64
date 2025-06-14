@@ -84,7 +84,10 @@ RUN cd $ROOTFS_ROOT && mkdir -p bin dev etc home lib lib64 proc sbin sys tmp usr
     && cp $SYSROOT/lib/libc.so.6 lib64
 
 # DTB
-# TODO() Dump dtb from virt qemu deser and store
+ENV QEMU_AARCH64_CALL_PREFIX="qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 4 -m 256"
+
+RUN $QEMU_AARCH64_CALL_PREFIX -display none -machine dumpdtb=virt-gicv3.dtb \
+    && dtc -I dtb -O dts  -f virt-gicv3.dtb -o virt-gicv3.dtsi
 
 # Scripts
 COPY scripts scripts
