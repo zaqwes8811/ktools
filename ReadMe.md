@@ -9,7 +9,7 @@ docker build -f DockerfileAarch64 -t qemu_wrapper_aarch64:latest .
 - Docker run
 
 ```
-docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --volume $PWD:/home/builder/workdir:rw --user $(id -u) qemu_wrapper_aarch64:latest bash
+docker run --name qemu_aarch64 -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --volume $PWD:/home/builder/workdir:rw --user $(id -u) qemu_wrapper_aarch64:latest bash
 ```
 
 - Note: next actions inside of docker and image has env vars presets, base dtsi, bare rootfs and stock kernel archive. All from `$KERNEL_SRC`
