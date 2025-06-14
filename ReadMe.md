@@ -1,12 +1,16 @@
 # Usige
 
-- Build
+- Docker build
 
-`docker build -f DockerfileAarch64 -t qemu_wrapper_aarch64:latest .`
+```
+docker build -f DockerfileAarch64 -t qemu_wrapper_aarch64:latest .
+```
 
 - Docker run
 
-`docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --volume $PWD:/home/builder/workdir:rw --user $(id -u) qemu_wrapper_aarch64:latest bash`
+```
+docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --volume $PWD:/home/builder/workdir:rw --user $(id -u) qemu_wrapper_aarch64:latest bash
+```
 
 - Note: next actions inside of docker and image has env vars presets, base dtsi, bare rootfs and stock kernel archive. All from `~/workdir`
 
@@ -26,7 +30,7 @@ make Image
 make modules
 ```
 
-- Pack rootfs. It stored at docker build in $ROOTFS_ROOT
+- Pack rootfs. It stored at docker build in `$ROOTFS_ROOT`
 
 ```
 # It create initramfs from folder specified in $ROOTFS_ROOT
@@ -65,7 +69,7 @@ $QEMU_AARCH64_CALL_PREFIX \
     -initrd initramfs.cpio.gz
 ```
 
-- mount some fs
+- Mount some fs
 
 ```
 mount -t proc proc /proc
@@ -75,7 +79,7 @@ TODO() devfs?
 
 ```
 
-- mount host folder
+- Mount host folder
 
 ```
 mkdir -p /mnt/shared9p
