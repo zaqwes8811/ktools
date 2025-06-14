@@ -12,7 +12,7 @@ docker build -f DockerfileAarch64 -t qemu_wrapper_aarch64:latest .
 docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --volume $PWD:/home/builder/workdir:rw --user $(id -u) qemu_wrapper_aarch64:latest bash
 ```
 
-- Note: next actions inside of docker and image has env vars presets, base dtsi, bare rootfs and stock kernel archive. All from `~/workdir`
+- Note: next actions inside of docker and image has env vars presets, base dtsi, bare rootfs and stock kernel archive. All from `~/workdir/linux-$KERNEL_VERSION`
 
 
 - Unpack and build kernel, dts will be external with patches for developed drivers - virt emu specific thing
@@ -37,13 +37,15 @@ make modules
 cd ~/workdir/linux-$KERNEL_VERSION
 
 cd $ROOTFS_ROOT && find . | cpio -H newc -ov --owner root:root > /tmp/initramfs.cpio && cd - && gzip -f /tmp/initramfs.cpio && mv /tmp/initramfs.cpio.gz .
-
 ```
 
 - Dts from base virt dts
 
-`cd ~/workdir/linux-$KERNEL_VERSION && dtc -i /opt/ -I dts -O dtb -o virt_aarch64.dtb ../virt_aarch64.dts`
+```
+cd ~/workdir/linux-$KERNEL_VERSION
 
+dtc -i /opt/ -I dts -O dtb -o virt_aarch64.dtb ../virt_aarch64.dts
+```
 
 - Run emu
 
@@ -66,7 +68,6 @@ mount -t proc proc /proc
 mount -t sysfs sysfs /sys
 
 TODO() devfs?
-
 ```
 
 - Mount host folder
