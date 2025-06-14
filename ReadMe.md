@@ -51,16 +51,6 @@ cd $ROOTFS_ROOT && find . | cpio -H newc -ov --owner root:root > /tmp/initramfs.
 
 cd ~/workdir/linux-$KERNEL_VERSION
 
-from linux src root
-
-qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 4 -m 256 \
-    -dtb virt_aarch64.dtb \
-    -kernel arch/arm64/boot/Image \
-    -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
-    -initrd initramfs.cpio.gz
-
-Or better
-
 $QEMU_AARCH64_CALL_PREFIX \
     -dtb virt_aarch64.dtb \
     -kernel arch/arm64/boot/Image \
