@@ -66,6 +66,7 @@ ENV PATH="$PATH:$HOME/x-tools/aarch64-unknown-linux-gnu/bin"
 RUN wget https://cdn.kernel.org/pub/linux/kernel/v$KERNEL_MAJOR.x/linux-$KERNEL_VERSION.tar.xz
 
 # Rootfs
+USER builder
 RUN git clone git://busybox.net/busybox.git && cd busybox && git checkout $BUSYBOX_TAG -b bb \
     && make defconfig \
     && tar -xvf /opt/linux-$KERNEL_VERSION.tar.xz -C /tmp/ \
@@ -82,6 +83,7 @@ RUN cd $ROOTFS_ROOT && mkdir -p bin dev etc home lib lib64 proc sbin sys tmp usr
     && cp $SYSROOT/lib/libm.so.6 lib64 \
     && cp $SYSROOT/lib/libresolv.so.2 lib64 \
     && cp $SYSROOT/lib/libc.so.6 lib64
+USER root
 
 # DTB
 ENV QEMU_AARCH64_CALL_PREFIX="qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 4 -m 256"
