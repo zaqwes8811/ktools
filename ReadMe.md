@@ -30,7 +30,9 @@ make modules
 
 ```
 # It create initramfs from folder specified in $ROOTFS_ROOT
-cd ~/workdir/linux-$KERNEL_VERSION && pack_rootfs.sh
+cd ~/workdir/linux-$KERNEL_VERSION
+
+cd $ROOTFS_ROOT && find . | cpio -H newc -ov --owner root:root > /tmp/initramfs.cpio && cd - && gzip -f /tmp/initramfs.cpio && mv /tmp/initramfs.cpio.gz .
 
 ```
 
