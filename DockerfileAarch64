@@ -92,9 +92,10 @@ RUN $QEMU_AARCH64_CALL_PREFIX -display none -machine dumpdtb=virt-gicv3.dtb \
     && dtc -I dtb -O dts  -f virt-gicv3.dtb -o virt-gicv3.dtsi
 
 # Scripts
-RUN apt-get update && apt-get install -y libssl-dev && \
+RUN apt-get update && apt-get install -y libssl-dev python2 && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 ENV KERNEL_SRC=$HOME/workdir/linux-$KERNEL_VERSION
 

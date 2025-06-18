@@ -194,3 +194,51 @@ rootfs /dev rootfs rw,size=89836k,nr_inodes=22459 0 0
 # Mout host dir
 
 https://superuser.com/questions/628169/how-to-share-a-directory-with-the-host-without-networking-in-qemu
+
+
+
+cd /tmp/
+wget https://www.python.org/ftp/python/3.10.18/Python-3.10.18.tgz
+tar xzf Python-3.10.18.tgz
+cd Python-3.10.18
+
+sudo ./configure --prefix=/opt/python/3.10.18/ --enable-optimizations --with-lto --with-computed-gotos --with-system-ffi --with-openssl=/usr/local/ssl
+sudo make -j "$(grep -c ^processor /proc/cpuinfo)"
+sudo make altinstall
+sudo rm /tmp/Python-3.10.18.tgz
+
+wget https://www.python.org/ftp/python/3.7.17/Python-3.7.17.tgz
+
+
+git clone https://github.com/libffi/libffi.git
+cd libffi
+./autogen.sh
+./configure \
+        CC=aarch64-unknown-linux-gnu-gcc \
+        CXX=aarch64-unknown-linux-gnu-g++ \
+        --host=aarch64-unknown-linux-gnu \
+        --build=x86_64-linux-gnu \
+        --target=aarch64-unknown-linux-gnu \
+        -prefix=/tmp/install_files \
+        -disable-dtrace -disable-systemtap -disable-selinux
+cd aarch64-unknown-linux-gnu
+make 
+make install
+
+./configure \
+        CC="aarch64-unknown-linux-gnu-gcc -I/tmp/install_files/include/" \
+        CXX="aarch64-unknown-linux-gnu-g++ -I/tmp/install_files/include/" \
+        AR=aarch64-unknown-linux-gnu-ar \
+        RANLIB=aarch64-unknown-linux-gnu-ranlib \
+        --host=aarch64-unknown-linux-gnu \
+        --build=x86_64-linux-gnu \
+        --target=aarch64-unknown-linux-gnu \
+        --disable-ipv6 \
+        --enable-optimizations \
+        --with-system-ffi \
+        --disable-tcltk \
+        --prefix=/tmp/target \
+        ac_cv_file__dev_ptmx=no \
+        ac_cv_file__dev_ptc=no
+
+https://docs.kernel.org/dev-tools/kunit/run_manual.html
