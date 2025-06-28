@@ -12,7 +12,7 @@ echo "alias emb_gen_dtb.sh='$cmd'" >> ~/.bashrc
 cmd='cd $KERNEL_SRC && $QEMU_AARCH64_CALL_PREFIX \
     -dtb virt_aarch64.dtb \
     -kernel arch/arm64/boot/Image \
-    -virtfs local,path=$PWD,mount_tag=host0,security_model=mapped,id=host0  \
-    -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
+    -virtfs local,path=$HOME/workdir,mount_tag=host0,security_model=mapped,id=host0  \
+    -append "console=ttyAMA0 rdinit=/init" -nographic \
     -initrd initramfs.cpio.gz'
 echo "alias emb_run_qemu.sh='$cmd'" >> ~/.bashrc
