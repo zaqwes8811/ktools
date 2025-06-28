@@ -242,3 +242,26 @@ make install
         ac_cv_file__dev_ptc=no
 
 https://docs.kernel.org/dev-tools/kunit/run_manual.html
+
+inittab
+https://stackoverflow.com/questions/54320960/how-to-check-if-init-starts-etc-inittab
+
+https://unix.stackexchange.com/questions/235281/is-there-a-way-to-get-linux-to-treat-an-initramfs-as-the-final-root-filesystem
+
+
+$QEMU_AARCH64_CALL_PREFIX \
+    -dtb virt_aarch64.dtb \
+    -kernel arch/arm64/boot/Image \
+    -virtfs local,path=$PWD,mount_tag=host0,security_model=mapped,id=host0  \
+    -append "console=ttyAMA0 rdinit=/init" -nographic \
+    -initrd initramfs.cpio.gz
+
+/init
+
+#!/bin/sh
+# devtmpfs does not get automounted for initramfs
+/bin/mount -t devtmpfs devtmpfs /dev
+exec 0</dev/console
+exec 1>/dev/console
+exec 2>/dev/console
+exec /sbin/init $*

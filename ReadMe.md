@@ -57,8 +57,7 @@ cd $KERNEL_SRC && $QEMU_AARCH64_CALL_PREFIX \
 ```
 mount -t proc proc /proc
 mount -t sysfs sysfs /sys
-
-TODO() devfs?
+/bin/mount -t devtmpfs devtmpfs /dev
 ```
 
 - Mount host folder
