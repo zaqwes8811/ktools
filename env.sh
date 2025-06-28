@@ -8,3 +8,11 @@ echo "alias emb_pack_initramfs.sh='$cmd'" >> ~/.bashrc
 
 cmd='cd $EXTERNAL_ROOT && dtc -i /opt/ -I dts -O dtb -o $KERNEL_SRC/virt_aarch64.dtb virt_aarch64.dts && cd $KERNEL_SRC'
 echo "alias emb_gen_dtb.sh='$cmd'" >> ~/.bashrc
+
+cmd='cd $KERNEL_SRC && $QEMU_AARCH64_CALL_PREFIX \
+    -dtb virt_aarch64.dtb \
+    -kernel arch/arm64/boot/Image \
+    -virtfs local,path=$PWD,mount_tag=host0,security_model=mapped,id=host0  \
+    -append "console=ttyAMA0 rdinit=/bin/sh" -nographic \
+    -initrd initramfs.cpio.gz'
+echo "alias emb_run_qemu.sh='$cmd'" >> ~/.bashrc

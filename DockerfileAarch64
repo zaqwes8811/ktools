@@ -88,7 +88,7 @@ USER root
 RUN ln -s $ROOTFS_ROOT /rootfs
 
 # DTB
-ENV QEMU_AARCH64_CALL_PREFIX="qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 4 -m 1024"
+ENV QEMU_AARCH64_CALL_PREFIX="qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 2 -m 1024"
 
 RUN $QEMU_AARCH64_CALL_PREFIX -display none -machine dumpdtb=virt-gicv3.dtb \
     && dtc -I dtb -O dts  -f virt-gicv3.dtb -o virt-gicv3.dtsi
