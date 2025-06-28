@@ -20,14 +20,15 @@ docker run --name qemu_aarch64 -it --rm --volume /etc/passwd:/etc/passwd:ro --vo
 ```
 tar -xvf /opt/linux-$KERNEL_VERSION.tar.xz -C ~/workdir
 
+scripts/kconfig/merge_config.sh ../qemu-research/kcsan.fragment
+
 cd $KERNEL_SRC
 
 make defconfig
 
 TODO() Merge with *.config
 
-make Image
-make modules
+make Image -j`nproc` && make modules -j`nproc`
 ```
 
 - Pack rootfs. It stored at docker build in `$ROOTFS_ROOT`
