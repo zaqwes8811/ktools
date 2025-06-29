@@ -265,3 +265,12 @@ exec 0</dev/console
 exec 1>/dev/console
 exec 2>/dev/console
 exec /sbin/init $*
+
+
+# U-boot
+
+https://docs.u-boot.org/en/stable/board/emulation/qemu-arm.html
+
+# Testing in general
+
+https://habr.com/ru/articles/652757/
