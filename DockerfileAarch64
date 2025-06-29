@@ -120,8 +120,6 @@ RUN $QEMU_AARCH64_CALL_PREFIX -display none -machine dumpdtb=virt-gicv3.dtb \
 
 ENV KERNEL_SRC=$HOME/workdir/linux-$KERNEL_VERSION
 
-
-
 COPY env.sh /
 
 WORKDIR $HOME
