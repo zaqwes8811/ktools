@@ -274,3 +274,9 @@ https://docs.u-boot.org/en/stable/board/emulation/qemu-arm.html
 # Testing in general
 
 https://habr.com/ru/articles/652757/
+
+
+ifneq ($(CONFIG_SND_SOC_TOPOLOGY_KUNIT_TEST),)
+# snd-soc-test-y := soc-topology-test.o
+obj-$(CONFIG_SND_SOC_TOPOLOGY_KUNIT_TEST) += soc-topology-test.o
+endif
