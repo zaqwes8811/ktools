@@ -64,3 +64,45 @@ make menuconfig
 make -j1 V=sc
 
 ```
+
+
+
+cp .config .config.backup
+
+# 2. Полная очистка
+make distclean
+rm -rf tmp/ build_dir/ staging_dir/ bin/
+
+# 3. Восстановить конфиг
+cp .config.backup .config
+
+# 4. Обновить feeds
+./scripts/feeds update -a
+./scripts/feeds install -a
+
+# 5. Собрать заново
+make toolchain/install -j$(nproc)
+make -j$(nproc) V=s 2>&1 | tee rebuild.log
+
+
+# Know issues
+
+at feeds update:
+
+git fetch-pack: unexpected disconnect while reading sideband packet fatal: early EOF fatal: index-pack failed
+
+Updating feed 'packages' from 'https://git.openwrt.org/feed/packages.git' ...
+Cloning into './feeds/packages'...
+remote: Enumerating objects: 7396, done.
+remote: Counting objects: 100% (7396/7396), done.
+remote: Compressing objects: 100% (6095/6095), done.
+error: RPC failed; curl 18 transfer closed with outstanding read data remaining
+fetch-pack: unexpected disconnect while reading sideband packet
+fatal: early EOF
+fatal: index-pack failed
+failed.
+
+export HOME=/workspace
+
+Solution:
+https://stackoverflow.com/questions/38618885/error-rpc-failed-curl-transfer-closed-with-outstanding-read-data-remaining
