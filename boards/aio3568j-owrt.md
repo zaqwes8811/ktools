@@ -1,8 +1,16 @@
 
+# Start
+
+`./run_docker.sh`
 
 git clone https://git.openwrt.org/openwrt/openwrt.git
 
+More relailale:
+git clone https://github.com/openwrt/openwrt.git
+
 Close
+
+cd openwrt && git checkout tags/v24.10.5
 
 ```
 
@@ -64,3 +72,33 @@ make menuconfig
 make -j1 V=sc
 
 ```
+wget https://downloads.openwrt.org/snapshots/targets/rockchip/armv8/openwrt-toolchain-rockchip-armv8_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+
+python3 -m venv venv
+
+
+rm .config
+
+./scripts/ext-toolchain.sh --toolchain \
+		/opt/openwrt-toolchain-rockchip-armv8_gcc-14.3.0_musl.Linux-x86_64/toolchain-aarch64_generic_gcc-14.3.0_musl/ \
+		--config rockchip_armv8
+
+make menuconfig  # select board
+
+
+mistery
+```
+make[2]: Entering directory '/workspace/openwrt/scripts/config'
+make[2]: 'conf' is up to date.
+make[2]: Leaving directory '/workspace/openwrt/scripts/config'
+Checking 'python3-pyelftools'... failed.
+Checking 'python3-dev'... ok.
+Checking 'python3-setuptools'... failed.
+Checking 'swig'... ok.
+
+u-boot: Please install the Python3 elftools module
+u-boot: Please install the Python3 setuptools module
+```
+
+
+$(STAGING_DIR_HOST)/bin/python3
