@@ -102,3 +102,96 @@ u-boot: Please install the Python3 setuptools module
 
 
 $(STAGING_DIR_HOST)/bin/python3
+
+# New build
+
+```
+cd /workspace/openwrt
+
+make -j1 V=sc
+
+dtb
+cp openwrt/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/image-rk3568-rock-3b.dtb .
+
+build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/linux-6.6.119
+
+
+
+dtc -I dtb -O dts -o rock.dts image-rk3568-rock-3b.dtb
+
+dtc -I dtb -O dts -o firefly.dts rk3568-firefly-aioj.dtb
+
+
+openwrt/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/linux-6.6.119/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+  openwrt/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/linux-6.6.119/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+    openwrt/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/linux-6.6.119/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+
+./kernel/arch/arm64/boot/dts/rockchip/rk3568-firefly-aioj.dts
+
+rk356x_sdk-linux5.10/kernel/arch/arm64/boot/dts/rockchip/rk3568-firefly-aioj.dts
+  rk356x_sdk-linux5.10/kernel/arch/arm64/boot/dts/rockchip/rk3568-firefly-aioj.dtsi
+    rk356x_sdk-linux5.10/kernel/arch/arm64/boot/dts/rockchip/rk3568-firefly-port.dtsi
+      rk356x_sdk-linux5.10/kernel/arch/arm64/boot/dts/rockchip/rk3568-firefly-core.dtsi
+        rk356x_sdk-linux5.10/kernel/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+      rk356x_sdk-linux5.10/kernel/arch/arm64/boot/dts/rockchip/rk3568-linux.dtsi
+
+
+diff -u rk356x_sdk-linux5.10/kernel/arch/arm64/boot/dts/rockchip/rk3568.dtsi openwrt/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/linux-6.6.119/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+
+
+/workspace/openwrt/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/tmp
+
+openwrt-rockchip-armv8-radxa_rock-3b-squashfs-sysupgrade.img
+
+
+openwrt/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/tmp
+
+
+export EXPORT_DIR=openwrt/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/tmp/
+
+
+rm -rf owrt.img && \
+gunzip -dkf $EXPORT_DIR/openwrt-rockchip-armv8-radxa_rock-3b-squashfs-sysupgrade.img.gz || true && \
+	cp $EXPORT_DIR/openwrt-rockchip-armv8-radxa_rock-3b-squashfs-sysupgrade.img owrt.img
+
+
+patch from 
+
+/workspace/openwrt/dl/linux-6.6.119.tar.xz
+
+cat /sys/kernel/debug/pinctrl/*/pinmux-pins
+
+ls -la /sys/class/gpio/
+cat /sys/kernel/debug/gpio | grep 89
+
+RK_PD1: 2*32 + 3*8 + 1 = 64 + 24 + 1 = 89
+
+root@OpenWrt:~# 
+
+cat /sys/kernel/debug/pinctrl/*/pinmux-pins | grep -A2 -B2 "89"
+
+pin 87 (gpio2-23): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+pin 88 (gpio2-24): 3c0000000.pcie (GPIO UNCLAIMED) function pcie20 group pcie20m1-pins
+pin 89 (gpio2-25): 3c0000000.pcie gpio2:89 function pcie20 group pcie20m1-pins
+pin 90 (gpio2-26): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+pin 91 (gpio2-27): (MUX UNCLAIMED) gpio2:91
+root@OpenWrt:~# 
+
+cat /sys/kernel/debug/pinctrl/*/pinmux-pins | grep -A2 -B2 "91"
+
+pin 89 (gpio2-25): 3c0000000.pcie gpio2:89 function pcie20 group pcie20m1-pins
+pin 90 (gpio2-26): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+pin 91 (gpio2-27): (MUX UNCLAIMED) gpio2:91
+pin 92 (gpio2-28): 3c0800000.pcie (GPIO UNCLAIMED) function pcie30x2 group pcie30x2m1-pins
+pin 93 (gpio2-29): 3c0800000.pcie (GPIO UNCLAIMED) function pcie30x2 group pcie30x2m1-pins
+
+
+rm -rf openwrt/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-rockchip_armv8/tmp/*
+
+
+diff -Naur --exclude="*.o" --exclude="*.cmd" --exclude="*.ko" --exclude="Image" \
+		 --exclude="generated" --no-dereference \
+     linux-6.6.119.orig/ linux-6.6.119/ | \
+     sed 's|linux-6.6.119.orig/|a/|g; s|linux-6.6.119/|b/|g' > /workspace/0000-aio3568j-gmac01.patch
+
+```
