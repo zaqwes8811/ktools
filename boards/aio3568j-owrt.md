@@ -194,4 +194,42 @@ diff -Naur --exclude="*.o" --exclude="*.cmd" --exclude="*.ko" --exclude="Image" 
      linux-6.6.119.orig/ linux-6.6.119/ | \
      sed 's|linux-6.6.119.orig/|a/|g; s|linux-6.6.119/|b/|g' > /workspace/0000-aio3568j-gmac01.patch
 
+# TODO() Apply patch at build time
+
+```
+
+2. Install iperf3
+
+```
+cd /workspace/openwrt
+
+make menuconfig
+```
+
+3. Dongles
+
+```
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 004: ID 06cb:00bd Synaptics, Inc. 
+Bus 001 Device 003: ID 04f2:b67c Chicony Electronics Co., Ltd Integrated Camera
+Bus 001 Device 007: ID 093a:2510 Pixart Imaging, Inc. Optical Mouse
+Bus 001 Device 006: ID 8087:0029 Intel Corp. 
+Bus 001 Device 005: ID 058f:9540 Alcor Micro Corp. AU9540 Smartcard Reader
+Bus 001 Device 019: ID a69c:5721 aicsemi Aic MSC
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+
+sudo usb_modeswitch -K -v 0xa69c -p 0x5721
+
+doesn't work
+
+
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 004: ID 06cb:00bd Synaptics, Inc. 
+Bus 001 Device 003: ID 04f2:b67c Chicony Electronics Co., Ltd Integrated Camera
+Bus 001 Device 007: ID 093a:2510 Pixart Imaging, Inc. Optical Mouse
+Bus 001 Device 006: ID 8087:0029 Intel Corp. 
+Bus 001 Device 005: ID 058f:9540 Alcor Micro Corp. AU9540 Smartcard Reader
+Bus 001 Device 025: ID 0bda:b851 Realtek Semiconductor Corp. 802.11ax WLAN Adapter
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+
 ```
