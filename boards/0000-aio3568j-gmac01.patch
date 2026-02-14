@@ -1,0 +1,477 @@
+diff -Naur '--exclude=*.o' '--exclude=*.cmd' '--exclude=*.ko' '--exclude=Image' '--exclude=generated' --no-dereference a/arch/arm64/boot/dts/rockchip/rk3568-pinctrl.dtsi b/arch/arm64/boot/dts/rockchip/rk3568-pinctrl.dtsi
+--- a/arch/arm64/boot/dts/rockchip/rk3568-pinctrl.dtsi	2025-12-06 21:18:54.000000000 +0000
++++ b/arch/arm64/boot/dts/rockchip/rk3568-pinctrl.dtsi	2026-02-14 09:27:14.038545222 +0000
+@@ -1484,16 +1484,16 @@
+ 				<0 RK_PB5 3 &pcfg_pull_none>;
+ 		};
+ 
+-		/omit-if-no-ref/
+-		pcie20m1_pins: pcie20m1-pins {
+-			rockchip,pins =
+-				/* pcie20_clkreqnm1 */
+-				<2 RK_PD0 4 &pcfg_pull_none>,
+-				/* pcie20_perstnm1 */
+-				<3 RK_PC1 4 &pcfg_pull_none>,
+-				/* pcie20_wakenm1 */
+-				<2 RK_PD1 4 &pcfg_pull_none>;
+-		};
++		// /omit-if-no-ref/
++		// pcie20m1_pins: pcie20m1-pins {
++		// 	rockchip,pins =
++		// 		/* pcie20_clkreqnm1 */
++		// 		<2 RK_PD0 4 &pcfg_pull_none>,
++		// 		/* pcie20_perstnm1 */
++		// 		<3 RK_PC1 4 &pcfg_pull_none>,
++		// 		/* pcie20_wakenm1 */
++		// 		<2 RK_PD1 4 &pcfg_pull_none>;
++		// };
+ 
+ 		/omit-if-no-ref/
+ 		pcie20m2_pins: pcie20m2-pins {
+diff -Naur '--exclude=*.o' '--exclude=*.cmd' '--exclude=*.ko' '--exclude=Image' '--exclude=generated' --no-dereference a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+--- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts	2026-02-13 15:59:24.793737081 +0000
++++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts	2026-02-14 09:54:14.066802852 +0000
+@@ -24,6 +24,20 @@
+ 		led-upgrade = &led_green;
+ 	};
+ 
++	gmac0_clkin: external-gmac0-clock {
++		compatible = "fixed-clock";
++		clock-frequency = <125000000>;
++		clock-output-names = "gmac0_clkin";
++		#clock-cells = <0>;
++	};
++
++	gmac1_clkin: external-gmac1-clock {
++		compatible = "fixed-clock";
++		clock-frequency = <125000000>;
++		clock-output-names = "gmac1_clkin";
++		#clock-cells = <0>;
++	};
++
+ 	chosen {
+ 		stdout-path = "serial2:1500000n8";
+ 	};
+@@ -184,12 +198,17 @@
+ };
+ 
+ &gmac0 {
+-	assigned-clocks = <&cru SCLK_GMAC0_RX_TX>, <&cru SCLK_GMAC0>;
+-	assigned-clock-parents = <&cru SCLK_GMAC0_RGMII_SPEED>, <&cru CLK_MAC0_2TOP>;
++	phy-mode = "rgmii";
+ 	clock_in_out = "input";
+-	phy-handle = <&rgmii_phy0>;
+-	phy-mode = "rgmii-id";
+-	phy-supply = <&vcc_3v3>;
++
++	snps,reset-gpio = <&gpio2 RK_PD3 GPIO_ACTIVE_LOW>;
++	snps,reset-active-low;
++	/* Reset time is 20ms, 100ms for rtl8211f */
++	snps,reset-delays-us = <0 20000 100000>;
++
++	assigned-clocks = <&cru SCLK_GMAC0_RX_TX>, <&cru SCLK_GMAC0>;
++	assigned-clock-parents = <&cru SCLK_GMAC0_RGMII_SPEED>, <&gmac0_clkin>;
++
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&gmac0_miim
+ 		     &gmac0_tx_bus2
+@@ -197,16 +216,26 @@
+ 		     &gmac0_rgmii_clk
+ 		     &gmac0_rgmii_bus
+ 		     &gmac0_clkinout>;
+-	status = "okay";
++
++	tx_delay = <0x3c>;
++	rx_delay = <0x2f>;
++
++	phy-handle = <&rgmii_phy0>;
++	status = "disabled";
+ };
+ 
+ &gmac1 {
+-	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
+-	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru CLK_MAC1_2TOP>;
++	phy-mode = "rgmii";
+ 	clock_in_out = "input";
+-	phy-handle = <&rgmii_phy1>;
+-	phy-mode = "rgmii-id";
+-	phy-supply = <&vcc_3v3>;
++
++	snps,reset-gpio = <&gpio2 RK_PD1 GPIO_ACTIVE_LOW>;
++	snps,reset-active-low;
++	/* Reset time is 20ms, 100ms for rtl8211f */
++	snps,reset-delays-us = <0 20000 100000>;
++
++	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
++	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>, <&gmac1_clkin>;
++
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&gmac1m1_miim
+ 		     &gmac1m1_tx_bus2
+@@ -214,9 +243,15 @@
+ 		     &gmac1m1_rgmii_clk
+ 		     &gmac1m1_rgmii_bus
+ 		     &gmac1m1_clkinout>;
+-	status = "okay";
++
++	tx_delay = <0x4f>;
++	rx_delay = <0x26>;
++
++	phy-handle = <&rgmii_phy1>;
++	status = "disabled";
+ };
+ 
++
+ &gpu {
+ 	mali-supply = <&vdd_gpu>;
+ 	status = "okay";
+@@ -515,32 +550,46 @@
+ 	status = "okay";
+ };
+ 
++// &mdio0 {
++// 	rgmii_phy0: ethernet-phy@1 {
++// 		compatible = "ethernet-phy-ieee802.3-c22";
++// 		reg = <1>;
++// 		reset-assert-us = <20000>;
++// 		reset-deassert-us = <50000>;
++// 		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
++// 	};
++// };
++
++// &mdio1 {
++// 	rgmii_phy1: ethernet-phy@1 {
++// 		compatible = "ethernet-phy-ieee802.3-c22";
++// 		reg = <1>;
++// 		reset-assert-us = <20000>;
++// 		reset-deassert-us = <50000>;
++// 		reset-gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_LOW>;
++// 	};
++// };
++
+ &mdio0 {
+-	rgmii_phy0: ethernet-phy@1 {
++	rgmii_phy0: phy@0 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+-		reg = <1>;
+-		reset-assert-us = <20000>;
+-		reset-deassert-us = <50000>;
+-		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
++		reg = <0x0>;
+ 	};
+ };
+ 
+ &mdio1 {
+-	rgmii_phy1: ethernet-phy@1 {
++	rgmii_phy1: phy@0 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+-		reg = <1>;
+-		reset-assert-us = <20000>;
+-		reset-deassert-us = <50000>;
+-		reset-gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_LOW>;
++		reg = <0x0>;
+ 	};
+ };
+ 
+ &pcie2x1 {
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&pcie20m1_pins>;
++	// pinctrl-0 = <&pcie20m1_pins>;
+ 	reset-gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_HIGH>;
+ 	vpcie3v3-supply = <&vcc3v3_sys2>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &pcie30phy {
+@@ -587,14 +636,14 @@
+ 		};
+ 	};
+ 
+-	pcie20 {
+-		pcie20m1_pins: pcie20m1-pins {
+-			rockchip,pins =
+-				<2 RK_PD0 4 &pcfg_pull_none>,
+-				<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>,
+-				<2 RK_PD1 4 &pcfg_pull_none>;
+-		};
+-	};
++	// pcie20 {
++	// 	pcie20m1_pins: pcie20m1-pins {
++	// 		rockchip,pins =
++	// 			<2 RK_PD0 4 &pcfg_pull_none>,
++	// 			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>,
++	// 			<2 RK_PD1 4 &pcfg_pull_none>;
++	// 	};
++	// };
+ 
+ 	pcie30x2 {
+ 		pcie30x2m1_pins: pcie30x2m1-pins {
+@@ -782,3 +831,229 @@
+ 		remote-endpoint = <&hdmi_in_vp0>;
+ 	};
+ };
++
++/* For AIO3568J */
++
++&gmac0 {
++    status = "okay";
++};
++
++&gmac1 {
++    status = "okay";
++};
++
++&rgmii_phy0 {
++	led_status_value = <0x6940>;
++};
++
++&rgmii_phy1 {
++	led_status_value = <0x6940>;
++};
++
++&pinctrl {
++	gmac0 {
++		/omit-if-no-ref/
++		gmac0_miim: gmac0-miim {
++			rockchip,pins =
++				/* gmac0_mdc */
++				<2 RK_PC3 2 &pcfg_pull_none>,
++				/* gmac0_mdio */
++				<2 RK_PC4 2 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac0_clkinout: gmac0-clkinout {
++			rockchip,pins =
++				/* gmac0_mclkinout */
++				<2 RK_PC2 2 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac0_rx_er: gmac0-rx-er {
++			rockchip,pins =
++				/* gmac0_rxer */
++				<2 RK_PC5 2 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac0_rx_bus2: gmac0-rx-bus2 {
++			rockchip,pins =
++				/* gmac0_rxd0 */
++				<2 RK_PB6 1 &pcfg_pull_none>,
++				/* gmac0_rxd1 */
++				<2 RK_PB7 2 &pcfg_pull_none>,
++				/* gmac0_rxdvcrs */
++				<2 RK_PC0 2 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac0_tx_bus2: gmac0-tx-bus2 {
++			rockchip,pins =
++				/* gmac0_txd0 */
++				<2 RK_PB3 1 &pcfg_pull_none_drv_level_2>,
++				/* gmac0_txd1 */
++				<2 RK_PB4 1 &pcfg_pull_none_drv_level_2>,
++				/* gmac0_txen */
++				<2 RK_PB5 1 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac0_rgmii_clk: gmac0-rgmii-clk {
++			rockchip,pins =
++				/* gmac0_rxclk */
++				<2 RK_PA5 2 &pcfg_pull_none>,
++				/* gmac0_txclk */
++				<2 RK_PB0 2 &pcfg_pull_none_drv_level_1>;
++		};
++
++		/omit-if-no-ref/
++		gmac0_rgmii_bus: gmac0-rgmii-bus {
++			rockchip,pins =
++				/* gmac0_rxd2 */
++				<2 RK_PA3 2 &pcfg_pull_none>,
++				/* gmac0_rxd3 */
++				<2 RK_PA4 2 &pcfg_pull_none>,
++				/* gmac0_txd2 */
++				<2 RK_PA6 2 &pcfg_pull_none_drv_level_2>,
++				/* gmac0_txd3 */
++				<2 RK_PA7 2 &pcfg_pull_none_drv_level_2>;
++		};
++	};
++
++	gmac1 {
++		/omit-if-no-ref/
++		gmac1m0_miim: gmac1m0-miim {
++			rockchip,pins =
++				/* gmac1_mdcm0 */
++				<3 RK_PC4 3 &pcfg_pull_none>,
++				/* gmac1_mdiom0 */
++				<3 RK_PC5 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m0_clkinout: gmac1m0-clkinout {
++			rockchip,pins =
++				/* gmac1_mclkinoutm0 */
++				<3 RK_PC0 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m0_rx_er: gmac1m0-rx-er {
++			rockchip,pins =
++				/* gmac1_rxerm0 */
++				<3 RK_PB4 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m0_rx_bus2: gmac1m0-rx-bus2 {
++			rockchip,pins =
++				/* gmac1_rxd0m0 */
++				<3 RK_PB1 3 &pcfg_pull_none>,
++				/* gmac1_rxd1m0 */
++				<3 RK_PB2 3 &pcfg_pull_none>,
++				/* gmac1_rxdvcrsm0 */
++				<3 RK_PB3 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m0_tx_bus2: gmac1m0-tx-bus2 {
++			rockchip,pins =
++				/* gmac1_txd0m0 */
++				<3 RK_PB5 3 &pcfg_pull_none_drv_level_2>,
++				/* gmac1_txd1m0 */
++				<3 RK_PB6 3 &pcfg_pull_none_drv_level_2>,
++				/* gmac1_txenm0 */
++				<3 RK_PB7 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m0_rgmii_clk: gmac1m0-rgmii-clk {
++			rockchip,pins =
++				/* gmac1_rxclkm0 */
++				<3 RK_PA7 3 &pcfg_pull_none>,
++				/* gmac1_txclkm0 */
++				<3 RK_PA6 3 &pcfg_pull_none_drv_level_1>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m0_rgmii_bus: gmac1m0-rgmii-bus {
++			rockchip,pins =
++				/* gmac1_rxd2m0 */
++				<3 RK_PA4 3 &pcfg_pull_none>,
++				/* gmac1_rxd3m0 */
++				<3 RK_PA5 3 &pcfg_pull_none>,
++				/* gmac1_txd2m0 */
++				<3 RK_PA2 3 &pcfg_pull_none_drv_level_2>,
++				/* gmac1_txd3m0 */
++				<3 RK_PA3 3 &pcfg_pull_none_drv_level_2>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m1_miim: gmac1m1-miim {
++			rockchip,pins =
++				/* gmac1_mdcm1 */
++				<4 RK_PB6 3 &pcfg_pull_none>,
++				/* gmac1_mdiom1 */
++				<4 RK_PB7 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m1_clkinout: gmac1m1-clkinout {
++			rockchip,pins =
++				/* gmac1_mclkinoutm1 */
++				<4 RK_PC1 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m1_rx_er: gmac1m1-rx-er {
++			rockchip,pins =
++				/* gmac1_rxerm1 */
++				<4 RK_PB2 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m1_rx_bus2: gmac1m1-rx-bus2 {
++			rockchip,pins =
++				/* gmac1_rxd0m1 */
++				<4 RK_PA7 3 &pcfg_pull_none>,
++				/* gmac1_rxd1m1 */
++				<4 RK_PB0 3 &pcfg_pull_none>,
++				/* gmac1_rxdvcrsm1 */
++				<4 RK_PB1 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m1_tx_bus2: gmac1m1-tx-bus2 {
++			rockchip,pins =
++				/* gmac1_txd0m1 */
++				<4 RK_PA4 3 &pcfg_pull_none_drv_level_2>,
++				/* gmac1_txd1m1 */
++				<4 RK_PA5 3 &pcfg_pull_none_drv_level_2>,
++				/* gmac1_txenm1 */
++				<4 RK_PA6 3 &pcfg_pull_none>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m1_rgmii_clk: gmac1m1-rgmii-clk {
++			rockchip,pins =
++				/* gmac1_rxclkm1 */
++				<4 RK_PA3 3 &pcfg_pull_none>,
++				/* gmac1_txclkm1 */
++				<4 RK_PA0 3 &pcfg_pull_none_drv_level_1>;
++		};
++
++		/omit-if-no-ref/
++		gmac1m1_rgmii_bus: gmac1m1-rgmii-bus {
++			rockchip,pins =
++				/* gmac1_rxd2m1 */
++				<4 RK_PA1 3 &pcfg_pull_none>,
++				/* gmac1_rxd3m1 */
++				<4 RK_PA2 3 &pcfg_pull_none>,
++				/* gmac1_txd2m1 */
++				<3 RK_PD6 3 &pcfg_pull_none_drv_level_2>,
++				/* gmac1_txd3m1 */
++				<3 RK_PD7 3 &pcfg_pull_none_drv_level_2>;
++		};
++	};
++};
++
+diff -Naur '--exclude=*.o' '--exclude=*.cmd' '--exclude=*.ko' '--exclude=Image' '--exclude=generated' --no-dereference a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+--- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi	2026-02-13 15:59:24.645738148 +0000
++++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi	2026-02-14 10:06:57.264474292 +0000
+@@ -175,11 +175,13 @@
+ 		clocks = <&cru SCLK_GMAC0>, <&cru SCLK_GMAC0_RX_TX>,
+ 			 <&cru SCLK_GMAC0_RX_TX>, <&cru CLK_MAC0_REFOUT>,
+ 			 <&cru ACLK_GMAC0>, <&cru PCLK_GMAC0>,
+-			 <&cru SCLK_GMAC0_RX_TX>, <&cru CLK_GMAC0_PTP_REF>;
++			 <&cru SCLK_GMAC0_RX_TX>, <&cru CLK_GMAC0_PTP_REF>,
++			 <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
+ 		clock-names = "stmmaceth", "mac_clk_rx",
+ 			      "mac_clk_tx", "clk_mac_refout",
+ 			      "aclk_mac", "pclk_mac",
+-			      "clk_mac_speed", "ptp_ref";
++			      "clk_mac_speed", "ptp_ref",
++			      "pclk_xpcs", "clk_xpcs_eee";
+ 		resets = <&cru SRST_A_GMAC0>;
+ 		reset-names = "stmmaceth";
+ 		rockchip,grf = <&grf>;
+diff -Naur '--exclude=*.o' '--exclude=*.cmd' '--exclude=*.ko' '--exclude=Image' '--exclude=generated' --no-dereference a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+--- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi	2026-02-13 15:59:24.645738148 +0000
++++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi	2026-02-14 10:06:29.544689973 +0000
+@@ -721,11 +721,13 @@
+ 		clocks = <&cru SCLK_GMAC1>, <&cru SCLK_GMAC1_RX_TX>,
+ 			 <&cru SCLK_GMAC1_RX_TX>, <&cru CLK_MAC1_REFOUT>,
+ 			 <&cru ACLK_GMAC1>, <&cru PCLK_GMAC1>,
+-			 <&cru SCLK_GMAC1_RX_TX>, <&cru CLK_GMAC1_PTP_REF>;
++			 <&cru SCLK_GMAC1_RX_TX>, <&cru CLK_GMAC1_PTP_REF>,
++			 <&cru PCLK_XPCS>, <&cru CLK_XPCS_EEE>;
+ 		clock-names = "stmmaceth", "mac_clk_rx",
+ 			      "mac_clk_tx", "clk_mac_refout",
+ 			      "aclk_mac", "pclk_mac",
+-			      "clk_mac_speed", "ptp_ref";
++			      "clk_mac_speed", "ptp_ref",
++			      "pclk_xpcs", "clk_xpcs_eee";
+ 		resets = <&cru SRST_A_GMAC1>;
+ 		reset-names = "stmmaceth";
+ 		rockchip,grf = <&grf>;
