@@ -52,7 +52,7 @@ lo        Link encap:Local Loopback
 
 ```
 
-# Connect RJ45 to board Inner ethernet port (eth0)
+# Connect RJ45 to board Inner ethernet port (eth0/WAN)
 
 ```
 [  127.612378] rk_gmac-dwmac fe010000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
@@ -70,8 +70,16 @@ http://192.168.1.1/
 
 ```
 
-# `iperf3` test `eth0`
+# `iperf3` test `eth0` - it's WAN
 
 ```
+On board
 
+# server mode
+iperf3 -s
+
+# on host
+sudo apt install iperf3
+
+iperf3 -c 192.168.1.1 -R
 ```
