@@ -10,7 +10,7 @@ RUN cd /opt && wget https://downloads.openwrt.org/snapshots/targets/rockchip/arm
     && ls -la &&  tar -xvf openwrt-toolchain-rockchip-armv8_gcc-14.3.0_musl.Linux-x86_64.tar.zst
 
 RUN apt update && apt-get install -y python3.12-venv python3-pip
-RUN apt update && apt-get install -y strace
+RUN apt update && apt-get install -y strace autoconf automake libtool texinfo gperf
 # RUN apt update && apt-get install -y \
 #     build-essential ccache ecj fastjar file g++ gawk \
 #     gettext git java-propose-classpath libelf-dev libncurses5-dev \
