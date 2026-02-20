@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y gcc g++ gperf bison flex texinfo help2m
     python3-venv python3-pip \
     pkg-config libglib2.0-dev libpixman-1-dev \
     cpio \
-    device-tree-compiler libssl-dev nano && \
+    device-tree-compiler libssl-dev && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
@@ -71,6 +71,8 @@ RUN git clone git://busybox.net/busybox.git && cd busybox && git checkout $BUSYB
     && make defconfig \
     && tar -xvf /opt/linux-$KERNEL_VERSION.tar.xz -C /tmp/ \
     && /tmp/linux-$KERNEL_VERSION/scripts/config --disable CONFIG_TC \
+    && /tmp/linux-$KERNEL_VERSION/scripts/config --enable CONFIG_FEATURE_MOUNT_FSTAB \
+    && /tmp/linux-$KERNEL_VERSION/scripts/config --enable CONFIG_BINFMT_SCRIPT \
     && make && make install \
     && rm -rf /tmp/linux-$KERNEL_VERSION
 
@@ -82,29 +84,31 @@ RUN cd $ROOTFS_ROOT && mkdir -p bin dev etc home lib lib64 proc sbin sys tmp usr
     && cp $SYSROOT/lib/ld-linux-aarch64.so.1 lib \
     && cp $SYSROOT/lib/libm.so.6 lib64 \
     && cp $SYSROOT/lib/libresolv.so.2 lib64 \
-    && cp $SYSROOT/lib/libc.so.6 lib64
+    && cp $SYSROOT/lib/libc.so.6 lib64 \
+    && cp $SYSROOT/lib/libstdc++.so.6 lib64 \
+    && cp $SYSROOT/lib/libgcc_s.so.1 lib64
 
-RUN cat <<EOF >>$ROOTFS_ROOT/init
-#!/bin/sh
-# devtmpfs does not get automounted for initramfs
-/bin/mount -t devtmpfs devtmpfs /dev
-exec 0</dev/console
-exec 1>/dev/console
-exec 2>/dev/console
-exec /sbin/init $*
-EOF
+RUN echo '#!/bin/sh\n\
+# devtmpfs does not get automounted for initramfs\n\
+/bin/mount -t devtmpfs devtmpfs /dev\n\
+exec 0</dev/console\n\
+exec 1>/dev/console\n\
+exec 2>/dev/console\n\
+exec /sbin/init $*\n\
+' > $ROOTFS_ROOT/init
 
 RUN cp /opt/busybox/examples/inittab $ROOTFS_ROOT/etc/
 RUN mkdir -p $ROOTFS_ROOT/etc/init.d/
 
-RUN cat <<EOF >>$ROOTFS_ROOT/etc/init.d/rcS
-#!/bin/sh
-mount -t proc proc /proc
-mount -t sysfs sysfs /sys
-mount -t debugfs none /sys/kernel/debug/
-mkdir -p /workdir
-mount -t 9p -o trans=virtio,version=9p2000.L host0 /workdir
-EOF
+RUN echo '#!/bin/sh\n\
+mount -t proc proc /proc\n\
+mount -t sysfs sysfs /sys\n\
+mount -t debugfs none /sys/kernel/debug/\n\
+mkdir -p /workdir\n\
+mount -t 9p -o trans=virtio,version=9p2000.L host0 /workdir\n\
+ln -s /workdir/Android-kernel/bore-modules/drivers/soc/bore/alure /alure\n\
+' > $ROOTFS_ROOT/etc/init.d/rcS
+
 RUN chmod +x $ROOTFS_ROOT/init && chmod +x $ROOTFS_ROOT/etc/init.d/rcS
 
 USER root
@@ -112,14 +116,26 @@ USER root
 RUN ln -s $ROOTFS_ROOT /rootfs
 
 # DTB
-ENV QEMU_AARCH64_CALL_PREFIX="qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 2 -m 1024"
+ENV QEMU_AARCH64_CALL_PREFIX="qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a72 -machine type=virt -smp 4 -m 1024"
 
 RUN $QEMU_AARCH64_CALL_PREFIX -display none -machine dumpdtb=virt-gicv3.dtb \
     && dtc -I dtb -O dts  -f virt-gicv3.dtb -o virt-gicv3.dtsi
 
+RUN apt-get update && apt-get install -y nano && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
 ENV KERNEL_SRC=$HOME/workdir/linux-$KERNEL_VERSION
+ENV ROOTFS_MODULES_DIR=$ROOTFS_ROOT/lib/modules/$KERNEL_VERSION
+
+USER builder
+RUN mkdir -p $ROOTFS_MODULES_DIR
+USER root
 
 COPY env.sh /
+
+RUN apt-get update && apt-get install -y cmake && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
 WORKDIR $HOME

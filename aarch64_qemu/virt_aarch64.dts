@@ -1,7 +1,317 @@
-/include/ "virt-gicv3.dtsi"
+#include "virt-gicv3.dtsi"
+
+#include "qemu-bore-rmem.h"
 
 / {
-	i2c0x {
-		status = "enabled";
+
+	aliases {
+		vgpio2 = &vgpio_2;
+		vgpio3 = &vgpio_3;
+		vgpio64 = &vgpio_64;
+		i2c40 = &vi2c_40;
+		i2c41 = &vi2c_41;
 	};
+
+	vgpio_2: vgpio_2 {
+		gpio-controller;
+		#gpio-cells = <0x02>;
+		compatible = "bore,sfi-virtual-gpio";
+
+		interrupt-controller;
+		#interrupt-cells = <2>;
+
+		status = "disabled";
+	};
+
+	vgpio_3: vgpio_3 {
+		gpio-controller;
+		#gpio-cells = <0x02>;
+		compatible = "bore,sfi-virtual-gpio";
+
+		interrupt-controller;
+		#interrupt-cells = <2>;
+
+		status = "disabled";
+	};
+
+	/* Mailbox AP to CR52C2 */
+	sfi_cr52c2: sfi_cr52c2 {
+		compatible = "samsung,exynos920-sfi-cr52c2";
+		interrupts = <0x00 0x30 0x01>;
+		reg = <0x0 bore_MBX2_START_ADDR 0x0 bore_MBX2_SZ>;  /* AP2CR52C2 MAILBOX */
+		status = "disabled";
+
+		memory-region = <&sfi_cr52c2_rmem>;
+	};
+
+	vgpio_64: vgpio_64 {
+		gpio-controller;
+		#gpio-cells = <0x02>;
+		compatible = "bore,sfi-virtual-gpio";
+
+		interrupt-controller;
+		#interrupt-cells = <2>;
+
+		status = "disabled";
+	};
+
+	vi2c_40: vi2c40 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		compatible = "bore,sfi-virtual-i2c-bus";
+		reg = <0x0>;
+		status = "disabled";
+	};
+
+	vi2c_41: vi2c41 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		compatible = "bore,sfi-virtual-i2c-bus";
+		reg = <0x1>;
+		status = "disabled";
+	};
+
+	bore_sfi_nadpe_c0 {
+		compatible = "bore,sfi-nadpe";
+		sfi_core_idx = <0x0>;
+		status = "okay";
+	};
+
+	// ga657_touchscreen: borega657x@5d {
+	// 	// compatible = "bore,vgpio-customer";
+	// 	compatible = "goodix,ga657x";
+	// 	reg = <0 0x5d 0 0>;
+	// 	status = "disabled";  /* will be enabled on link lock */
+
+	// 	interrupt-parent = <&vgpio_3>;
+	// 	irq-gpios = <&vgpio_3 2 0x0>;
+	// 	irq-flags = <2>;
+	// 	reset-gpios = <&vgpio_2 3 0x0>;
+	// };
+
+	ga657_touchscreen_1: borega657x@5E {
+		compatible = "bore,vgpio-customer";
+		reg = <0 0x5E 0 0>;
+		status = "disabled";  /* will be enabled on link lock */
+
+		interrupt-parent = <&vgpio_64>;
+		irq-gpios = <&vgpio_64 2 0x0>;
+		irq-flags = <2>;
+		reset-gpios = <&vgpio_64 5 0x0>;
+	};
+
+	/delete-node/ pl061@9030000;
+	/delete-node/ gpio-keys;
+
+	reserved_memory: reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;  /* AOSP missmatch by default 1 */
+		ranges;
+
+		bore_sfi_shmem_ap: bore_sfi_shmem_ap {
+			compatible = "bore,sfimem";
+			reg = <0 bore_SHMEM_AP_START_ADDR 0 bore_SHMEM_AP_SZ>;
+			status = "disabled";
+		};
+
+		bore_sfi_shmem_c1: bore_sfi_shmem_c1 {
+			compatible = "bore,sfimem";
+			reg = <0 bore_SHMEM_C1_START_ADDR 0 bore_SHMEM_C1_SZ>;
+			status = "disabled";
+		};
+
+		bore_sfi_shmem_c0: bore_sfi_shmem_c0 {
+			compatible = "bore,sfimem";
+			reg = <0 bore_SHMEM_C0_START_ADDR 0 bore_SHMEM_C0_SZ>;
+			status = "disabled";
+		};
+
+		bore_sfi_shmem_bigdata: bore_sfi_shmem_bigdata {
+			compatible = "bore,sfimem";
+			reg = <0 bore_SHMEM_BIGDATA_START_ADDR 0 bore_SHMEM_BIGDATA_SZ>;
+			status = "disabled";
+		};
+
+		bore_sfi_shmem_ethdata: bore_sfi_shmem_ethdata {
+			compatible = "bore,sfimem";
+			reg = <0 bore_SHMEM_ETH_START_ADDR 0 bore_SHMEM_ETH_SZ>;
+			status = "disabled";
+		};
+
+		bore_sfi_shmem_logsdata: bore_sfi_shmem_logsdata {
+			compatible = "bore,sfimem";
+			reg = <0 bore_SHMEM_LOGSDATA_START_ADDR 0 bore_SHMEM_LOGSDATA_SZ>;
+			status = "disabled";
+		};
+
+		sfi_cr52c2_rmem: sfi_cr52c2_rmem {
+			compatible = "bore,sfimem";
+			reg = <0 bore_MBX2_START_ADDR 0 bore_MBX2_SZ>;
+			status = "disabled";
+		};
+	};
+
+	/* Qemu vmap() call troubles */
+	sfi_shmem_pool: sfi_shmem_pool {
+		compatible = "bore,sfi-shmem-pool";
+		reg = <0x0 bore_SHMEM_AP_START_ADDR			0 bore_SHMEM_AP_SZ>,
+				<0x0 bore_SHMEM_C1_START_ADDR		0 bore_SHMEM_C1_SZ>,
+				<0x0 bore_SHMEM_C0_START_ADDR		0 bore_SHMEM_C0_SZ>,
+				<0x0 bore_SHMEM_BIGDATA_START_ADDR	0 bore_SHMEM_BIGDATA_SZ>,
+				<0x0 bore_SHMEM_ETH_START_ADDR		0 bore_SHMEM_ETH_SZ>,
+				<0x0 bore_SHMEM_LOGSDATA_START_ADDR	0 bore_SHMEM_LOGSDATA_SZ>;
+		reg-names = "android-core",
+					"sfi-core-1",
+					"sfi-core-0",
+					"sfi-big-data",
+					"sfi-eth-data",
+					"sfi-logs-data";
+		manage = <1 0 1 0 0 0>;  // Need management for test for core 0
+		memory-region = <
+				&bore_sfi_shmem_ap
+				&bore_sfi_shmem_c1
+				&bore_sfi_shmem_c0
+				&bore_sfi_shmem_bigdata
+				&bore_sfi_shmem_ethdata
+				&bore_sfi_shmem_logsdata>;
+		status = "disabled";
+	};
+};
+
+&vi2c_41 {
+	// ds90ub94x_loader {
+	// 	compatible = "bore,ds90ub94x-monitor";
+	// 	status = "okay";
+	// 	reg = <0x01>;  /* Formal value */
+
+	// 	interrupt-parent = <&vgpio_64>;
+	// 	irq-gpios = <&vgpio_64 0 0x0>;
+	// 	irq-flags = <2>;
+	// 	load-on = <0>;
+
+	// 	remote-i2c-devices = <&ds>;
+	// };
+
+	ga657_touchscreen: borega657x@5d {
+		// compatible = "bore,vgpio-customer";
+		compatible = "goodix,ga657x";
+		reg = <0x5d 0x5d 0 0>;
+		status = "disabled";  /* will be enabled on link lock */
+
+		interrupt-parent = <&vgpio_3>;
+		irq-gpios = <&vgpio_3 2 0x0>;
+		irq-flags = <2>;
+		reset-gpios = <&vgpio_2 3 0x0>;
+	};
+
+	ds90ub94x_apps_loader {
+		compatible = "bore,ds90ub94x-monitor";
+		status = "okay";
+		reg = <0x02>;  /* Formal value */
+
+		interrupt-parent = <&vgpio_64>;
+		irq-gpios = <&vgpio_64 1 0x0>;
+		irq-flags = <2>;
+		load-on = <1>;
+
+		remote-i2c-devices = <&swpmcu &ga657_touchscreen>;
+	};
+
+	// ds: vi2c_customer@5d {
+	// 	compatible = "bore,vi2c-customer";
+	// 	reg = <0x5d>;
+	// 	status = "disabled";
+	// };
+
+	swp: vi2c_customer@5e {
+		compatible = "bore,vi2c-customer";
+		reg = <0x5e>;
+		status = "disabled";
+	};
+
+	touch: vi2c_customer@5F {
+		compatible = "bore,vi2c-customer";
+		reg = <0x5f>;
+		status = "disabled";
+	};
+
+	swpmcu: swpmcu@13 {
+		compatible = "bore,swpmcu";
+		reg = <0x13>;
+		status = "disabled";
+	};
+};
+
+&vi2c_40 {
+	status = "okay";
+};
+
+&vi2c_41 {
+	status = "okay";
+};
+
+&vgpio_2 {
+	status = "okay";
+};
+
+&vgpio_3 {
+	status = "okay";
+};
+
+&vgpio_64 {
+	status = "okay";
+};
+
+&swp {
+	status = "okay";
+};
+
+// &swpmcu {
+// 	status = "okay";
+// };
+
+&sfi_shmem_pool {
+	status = "okay";
+};
+
+&bore_sfi_shmem_ap {
+	status = "okay";
+};
+
+&bore_sfi_shmem_c1 {
+	status = "okay";
+};
+
+&bore_sfi_shmem_c0 {
+	status = "okay";
+};
+
+&bore_sfi_shmem_bigdata {
+	status = "okay";
+};
+
+&bore_sfi_shmem_ethdata {
+	status = "okay";
+};
+
+&bore_sfi_shmem_logsdata {
+	status = "okay";
+};
+
+&ga657_touchscreen {
+	status = "okay";
+};
+
+&ga657_touchscreen_1 {
+	status = "okay";
+};
+
+&sfi_cr52c2_rmem {
+	status = "okay";
+};
+
+&sfi_cr52c2 {
+	status = "okay";
 };
