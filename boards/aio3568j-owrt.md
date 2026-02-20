@@ -83,6 +83,15 @@ rm .config
 		/opt/openwrt-toolchain-rockchip-armv8_gcc-14.3.0_musl.Linux-x86_64/toolchain-aarch64_generic_gcc-14.3.0_musl/ \
 		--config rockchip_armv8
 
+./tmp/info/.packageinfo-boot_uboot-armsr
+./tmp/.kconfig-armsr_armv8
+./tmp/.kconfig-armsr_armv7
+
+
+./scripts/ext-toolchain.sh --toolchain \
+		/opt/openwrt-toolchain-rockchip-armv8_gcc-14.3.0_musl.Linux-x86_64/toolchain-aarch64_generic_gcc-14.3.0_musl/ \
+		--config armsr_armv8
+
 make menuconfig  # select board
 
 
