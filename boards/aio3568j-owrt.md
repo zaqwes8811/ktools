@@ -83,6 +83,15 @@ rm .config
 		/opt/openwrt-toolchain-rockchip-armv8_gcc-14.3.0_musl.Linux-x86_64/toolchain-aarch64_generic_gcc-14.3.0_musl/ \
 		--config rockchip_armv8
 
+./tmp/info/.packageinfo-boot_uboot-armsr
+./tmp/.kconfig-armsr_armv8
+./tmp/.kconfig-armsr_armv7
+
+
+./scripts/ext-toolchain.sh --toolchain \
+		/opt/openwrt-toolchain-rockchip-armv8_gcc-14.3.0_musl.Linux-x86_64/toolchain-aarch64_generic_gcc-14.3.0_musl/ \
+		--config armsr_armv8
+
 make menuconfig  # select board
 
 
@@ -690,3 +699,33 @@ pin 6 (gpio0-6): regulator-5v0-vcc-usb-host gpio0:6 function usb group usb-host-
 pin 28 (gpio0-28): regulator-3v3-vcc-pi6c-03 gpio0:28 function pcie group pcie-pwren-h
 pin 98 (gpio3-2): vcc-hub-power-regulator gpio3:98 function usb group vcc-hub-power-en
 pin 102 (gpio3-6): vcc-hub-reset-regulator gpio3:102 function usb group vcc-hub-reset-en
+
+
+############### persistent
+
+Step-by-Step Extroot Setup for SD Card
+
+DS: openwrt enable extroot for sd card at build time
+
+block-mount kmod-fs-ext4 e2fsprogs parted
+
+
+files/etc/uci-defaults/99-enable-extroot
+
+DS: Method 2: Build-Time Configuration Only (Runtime Automation)
+
+This method is less flexible because it depends on a pre-formatted SD card with a known UUID and might not handle first-boot data migration automatically.
+
+separated sd card
+
+DS: Approach 2: Single Image with Persistent Data Partition
+
+block-mount - For fstab management
+
+kmod-fs-ext4 - ext4 filesystem support
+
+e2fsprogs - Filesystem tools
+
+fdisk or parted - Partition manipulation
+
+sfdisk - Scriptable partitioning

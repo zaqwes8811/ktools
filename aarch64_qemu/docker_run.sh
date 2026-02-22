@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -x
+set -e
+
 # From emb/
 
 SCRIPT_ROOT=$(dirname "$0")
