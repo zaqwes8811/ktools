@@ -720,12 +720,12 @@ separated sd card
 
 DS: Approach 2: Single Image with Persistent Data Partition
 
-block-mount - For fstab management
+block-mount - For fstab management # Base/
+ 
+kmod-fs-ext4 - ext4 filesystem support  # Kernel modules/Filesystem
 
-kmod-fs-ext4 - ext4 filesystem support
+e2fsprogs - Filesystem tools  # Utilities/Filesystem
 
-e2fsprogs - Filesystem tools
+fdisk or parted - Partition manipulation  # Base/Bysibox/linux system util
 
-fdisk or parted - Partition manipulation
-
-sfdisk - Scriptable partitioning
+sfdisk - Scriptable partitioning  # Utilites/disk
