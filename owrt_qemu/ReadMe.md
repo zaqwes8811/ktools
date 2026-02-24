@@ -186,6 +186,7 @@ qemu-system-aarch64 \
     -nographic \
     -kernel openwrt-aio3568j/build_dir/target-aarch64-openwrt-linux-musl_musl/linux-armsr_armv8/vmlinux \
     -drive file=openwrt-with-overlay.img,format=raw,if=virtio \
+    -drive file=owrt_expanded.img,format=raw,if=virtio \
     -append "console=ttyAMA0 root=/dev/vda1 rootwait rootfstype=squashfs init=/sbin/init" \
     -d int,cpu_reset,unimp,guest_errors \
     -D qemu.log
