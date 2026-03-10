@@ -110,3 +110,8 @@ Host 192.168.1.100
   ConnectTimeout 60
 
 ```
+
+```
+        /opt/hailo-libs/ld-linux-aarch64.so.1 --library-path /opt/hailo-libs /usr/bin/python3 -c "import hailo_platform; print('Success!')"
+
+```
