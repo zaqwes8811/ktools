@@ -70,3 +70,48 @@ usr/lib/modules/6.19.6-edge-rockchip64/kernel/drivers/net/hailo_pci.ko
 
 
 ```
+
+
+```
+# Must remove old
+sudo rm -f /etc/netplan/*.yaml
+
+# Create new config for eth0
+sudo tee /etc/netplan/01-netcfg.yaml > /dev/null << 'EOF'
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      dhcp4: no
+      dhcp6: no
+      addresses:
+        - 192.168.1.100/24
+      routes:
+        - to: default
+          via: 192.168.1.1
+      nameservers:
+        addresses: [8.8.8.8, 1.1.1.1]
+EOF
+
+# Set correct permissions
+sudo chmod 600 /etc/netplan/01-netcfg.yaml
+
+# Apply the configuration
+sudo netplan apply
+
+
+Host 192.168.1.100
+  HostName 192.168.1.100
+  User root
+  ServerAliveInterval 60
+  ServerAliveCountMax 5
+  TCPKeepAlive yes
+  ConnectTimeout 60
+
+```
+
+```
+        /opt/hailo-libs/ld-linux-aarch64.so.1 --library-path /opt/hailo-libs /usr/bin/python3 -c "import hailo_platform; print('Success!')"
+
+```
