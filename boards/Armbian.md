@@ -11,7 +11,10 @@ mv userpatches/customize-image.sh userpatches/customize-image.sh.bak
 ./compile.sh CLEAN_LEVEL="make,debs" BOARD=station-p2 BRANCH=edge KERNEL_BTF=no BUILD_MINIMAL=yes BUILD_DESKTOP=no RELEASE=jammy KERNEL_GIT=shallow KERNEL_CONFIGURE=no PRIVATE_CCACHE=yes ENABLE_EXTENSIONS="hailo8-stationp2"
 
 
-./compile.sh BOARD=station-p2 BRANCH=edge KERNEL_BTF=no BUILD_MINIMAL=yes BUILD_DESKTOP=no RELEASE=jammy KERNEL_GIT=shallow KERNEL_CONFIGURE=no PRIVATE_CCACHE=yes ENABLE_EXTENSIONS="hailo8-stationp2" PACKAGE_LIST_ADDITIONAL="pciutils"
+# Build finally
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+./compile.sh BOARD=station-p2 BRANCH=edge KERNEL_BTF=no BUILD_MINIMAL=yes BUILD_DESKTOP=no RELEASE=jammy KERNEL_GIT=shallow KERNEL_CONFIGURE=no PRIVATE_CCACHE=yes
 
 
  EXTENSION="$EXTENSION_PATH"
